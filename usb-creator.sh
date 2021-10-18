@@ -31,15 +31,12 @@ echo
 done
 
 # Ask user for USB and validate that it will work
-while true
-do
 echo
 echo "Plug in a USB drive and select it to make it bootable with Windows" 
-diskutil list > /tmp/disks.txt 
-DISKS=(grep -hnr "/dev/" /tmp/disks.txt | cut -d'/' -f3-)
-if [[ $DISKS == *"synthesized"* ]] || [[ $DISKS == *"disk image"* ]] || [[ $DISKS == *"internal"* ]]
-rm /tmp/disks.txt
-echo "Enter a number as shown in the list (press 'r' to refresh):"
-read disk 
-done
+SELECTEDDISK=$(osascript -e 'list disks' -e 'choose from list (result) with prompt "Select your USB drive: (Select `Refresh` to refresh list)" default items "None" OK button name {"Select"} cancel button name {"Cancel"}')
+if [[ $SELECTEDDISK == "false" ]]; then
+    echo "Operation cancelled, quitting program..."
+else 
+    echo "$SELECTEDDISK was selected, validating..."
+fi
 
